@@ -11,10 +11,13 @@ const Home: React.FC = () => {
       {/* Hero Section */}
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0 z-0">
-          <div className="absolute inset-0 bg-gradient-to-b from-slate-950/40 via-slate-950/80 to-slate-950 z-10" />
+          {/* Reduced darkness: from 40/80 to 20/50 for more brightness */}
+          <div className="absolute inset-0 bg-gradient-to-b from-slate-950/20 via-slate-950/50 to-slate-950 z-10" />
+          {/* Modern radial glow effect */}
+          <div className="absolute inset-0 bg-gradient-radial from-amber-500/10 via-transparent to-transparent z-10" />
           <img
             src="/hero-bg.png"
-            className="w-full h-full object-cover opacity-30 scale-110"
+            className="w-full h-full object-cover opacity-60 scale-110"
             alt="Business Context"
           />
         </div>

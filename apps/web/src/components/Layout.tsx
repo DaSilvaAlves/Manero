@@ -27,8 +27,11 @@ const Navbar: React.FC = () => {
   return (
     <nav className={`fixed top-0 w-full z-40 transition-all duration-300 ${scrolled || mobileOpen ? 'bg-slate-950/95 backdrop-blur-md py-4 shadow-lg' : 'bg-transparent py-6'}`}>
       <div className="container mx-auto px-6 flex justify-between items-center">
-        <Link to="/" className="text-2xl font-bold font-display tracking-tighter">
-          MANUEL<span className="text-amber-500">MANERO</span>
+        <Link to="/" className="flex items-center gap-3">
+          <img src="/logo.png" alt="Manuel Manero Logo" className="h-10 w-auto" />
+          <span className="text-2xl font-bold font-display tracking-tighter">
+            MANUEL<span className="text-amber-500">MANERO</span>
+          </span>
         </Link>
 
         {/* Desktop nav */}

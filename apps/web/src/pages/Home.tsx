@@ -13,7 +13,7 @@ const Home: React.FC = () => {
         <div className="absolute inset-0 z-0">
           <div className="absolute inset-0 bg-gradient-to-b from-slate-950/40 via-slate-950/80 to-slate-950 z-10" />
           <img
-            src="/hero-bg.jpeg"
+            src="/hero-bg.png"
             className="w-full h-full object-cover opacity-30 scale-110"
             alt="Business Context"
           />

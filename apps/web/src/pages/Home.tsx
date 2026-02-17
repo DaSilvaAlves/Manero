@@ -1,7 +1,9 @@
 
 import React from 'react';
+import { Link } from 'react-router-dom';
 import AIQuiz from '../components/AIQuiz';
-import { PROGRAMS, TESTIMONIALS } from '../constants';  // Update: constants now at ../constants
+import { LeadForm } from '../components/LeadForm';
+import { PROGRAMS, TESTIMONIALS } from '../constants';
 
 const Home: React.FC = () => {
   return (
@@ -29,12 +31,12 @@ const Home: React.FC = () => {
             Comunicação estratégica, método comprovado e um ecossistema exclusivo para escalar a sua presença, influência e resultados financeiros.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <button className="bg-amber-500 text-slate-950 px-10 py-4 rounded-full font-bold text-lg hover:bg-amber-600 transition-all transform hover:scale-105 shadow-xl shadow-amber-500/20">
+            <Link to="/programas" className="bg-amber-500 text-slate-950 px-10 py-4 rounded-full font-bold text-lg hover:bg-amber-600 transition-all transform hover:scale-105 shadow-xl shadow-amber-500/20">
               Começar Agora
-            </button>
-            <button className="px-10 py-4 rounded-full border border-slate-700 font-bold text-lg hover:bg-slate-900 transition-all">
+            </Link>
+            <a href="#programas" className="px-10 py-4 rounded-full border border-slate-700 font-bold text-lg hover:bg-slate-900 transition-all">
               Ver Programas
-            </button>
+            </a>
           </div>
         </div>
       </section>
@@ -71,7 +73,7 @@ const Home: React.FC = () => {
       </section>
 
       {/* Programs Overview */}
-      <section className="py-24">
+      <section id="programas" className="py-24">
         <div className="container mx-auto px-6">
           <div className="flex justify-between items-end mb-12">
             <div>
@@ -92,9 +94,9 @@ const Home: React.FC = () => {
                     </div>
                   ))}
                 </div>
-                <button className="w-full py-4 rounded-xl bg-slate-900 border border-amber-500/30 text-amber-500 font-bold hover:bg-amber-500 hover:text-slate-950 transition-all">
+                <Link to="/programas" className="w-full py-4 rounded-xl bg-slate-900 border border-amber-500/30 text-amber-500 font-bold hover:bg-amber-500 hover:text-slate-950 transition-all text-center block">
                   {prog.cta}
-                </button>
+                </Link>
               </div>
             ))}
           </div>
@@ -124,7 +126,9 @@ const Home: React.FC = () => {
           <div className="grid md:grid-cols-2 gap-8">
             {TESTIMONIALS.map(t => (
               <div key={t.id} className="p-8 bg-slate-950 border border-slate-900 rounded-2xl flex gap-6">
-                <img src={t.avatar} className="w-16 h-16 rounded-full border-2 border-amber-500" alt={t.name} />
+                <div className="w-16 h-16 rounded-full border-2 border-amber-500 bg-amber-500/20 flex items-center justify-center text-amber-500 font-bold text-xl flex-shrink-0">
+                  {t.name.split(' ').map(n => n[0]).join('')}
+                </div>
                 <div>
                   <p className="text-slate-300 italic mb-4 leading-relaxed">"{t.content}"</p>
                   <h5 className="font-bold">{t.name}</h5>
@@ -133,6 +137,17 @@ const Home: React.FC = () => {
               </div>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* Lead Capture CTA */}
+      <section className="py-24 bg-slate-950">
+        <div className="container mx-auto px-6">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-5xl font-display font-bold mb-4">Pronto para <span className="gold-gradient">Transformar</span> a sua Marca?</h2>
+            <p className="text-slate-400 max-w-xl mx-auto">Deixe o seu contacto e receba conteúdos exclusivos sobre marca pessoal e posicionamento de elite.</p>
+          </div>
+          <LeadForm source="homepage-cta" />
         </div>
       </section>
     </div>

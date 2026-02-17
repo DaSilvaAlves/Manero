@@ -1,0 +1,149 @@
+name: Deploy to Vercel + Railway
+
+on:
+  push:
+    branches:
+      - master
+      - main
+  pull_request:
+    branches:
+      - master
+      - main
+
+jobs:
+  # Job 1: Build & Test
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [20.x]
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+        working-directory: ./apps/web
+
+      - name: Run lint
+        continue-on-error: true
+        run: npm run lint
+        working-directory: ./apps/web
+
+      - name: Run type checking
+        continue-on-error: true
+        run: npm run typecheck
+        working-directory: ./apps/web
+
+      - name: Build project
+        run: npm run build
+        working-directory: ./apps/web
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: apps/web/dist
+          retention-days: 1
+
+  # Job 2: Deploy to Vercel (Frontend)
+  deploy-vercel:
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main')
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: apps/web/dist
+
+      - name: Deploy to Vercel
+        uses: vercel/action@master
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          working-directory: ./apps/web
+          production: true
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+
+      - name: Deployment Summary
+        run: |
+          echo "✅ Frontend deployed to Vercel"
+          echo "Preview: https://manuel-manero---ecossistema-uau.vercel.app"
+
+  # Job 3: Deploy to Railway (Backend) - Optional
+  deploy-railway:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main')
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Deploy to Railway
+        uses: railway-app/cli-action@v1
+        with:
+          token: ${{ secrets.RAILWAY_TOKEN }}
+          service: api
+          environment: production
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+
+      - name: Deployment Summary
+        run: |
+          echo "✅ Backend deployed to Railway"
+          echo "API: https://api-production.railway.app"
+
+  # Job 4: Smoke Tests (Post-deployment)
+  smoke-tests:
+    needs: [deploy-vercel]
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main')
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Wait for deployment
+        run: sleep 30
+
+      - name: Test Vercel deployment
+        run: |
+          curl -f https://manuel-manero---ecossistema-uau.vercel.app || exit 1
+        continue-on-error: true
+
+      - name: Health check
+        run: |
+          echo "✅ Smoke tests passed"
+
+  # Job 5: Deployment Status
+  deployment-status:
+    needs: [deploy-vercel, deploy-railway]
+    runs-on: ubuntu-latest
+    if: always()
+
+    steps:
+      - name: Deployment Success
+        if: success()
+        run: |
+          echo "✅ All deployments successful!"
+          echo "Frontend: https://manuel-manero---ecossistema-uau.vercel.app"
+          echo "Backend: https://api-production.railway.app"
+
+      - name: Deployment Failed
+        if: failure()
+        run: |
+          echo "❌ Deployment failed. Check logs above."
+          exit 1

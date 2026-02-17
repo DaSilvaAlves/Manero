@@ -1,7 +1,7 @@
 
 import React from 'react';
 import AIQuiz from '../components/AIQuiz';
-import { PROGRAMS, TESTIMONIALS } from '../constants';
+import { PROGRAMS, TESTIMONIALS } from '../constants';  // Update: constants now at ../constants
 
 const Home: React.FC = () => {
   return (

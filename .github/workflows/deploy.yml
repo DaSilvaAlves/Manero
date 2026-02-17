@@ -28,6 +28,7 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
+          cache-dependency-path: './apps/web/package-lock.json'
 
       - name: Install dependencies
         run: npm ci
@@ -85,27 +86,24 @@ jobs:
           echo "✅ Frontend deployed to Vercel"
           echo "Preview: https://manuel-manero---ecossistema-uau.vercel.app"
 
-  # Job 3: Deploy to Railway (Backend) - Optional
+  # Job 3: Deploy to Railway (Backend) - Manual deployment
   deploy-railway:
     runs-on: ubuntu-latest
     if: github.event_name == 'push' && (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main')
 
     steps:
-      - uses: actions/checkout@v4
-
-      - name: Deploy to Railway
-        uses: railway-app/cli-action@v1
-        with:
-          token: ${{ secrets.RAILWAY_TOKEN }}
-          service: api
-          environment: production
-        env:
-          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
-
-      - name: Deployment Summary
+      - name: Railway Deployment Instructions
         run: |
-          echo "✅ Backend deployed to Railway"
-          echo "API: https://api-production.railway.app"
+          echo "⏳ Railway backend deployment requires manual setup or Railway CLI"
+          echo "📋 To deploy to Railway:"
+          echo "1. Go to: https://railway.app/projects"
+          echo "2. Select your project"
+          echo "3. Connect to GitHub repository: DaSilvaAlves/Manero"
+          echo "4. Configure deployment from apps/api directory"
+          echo ""
+          echo "Alternatively, use Railway CLI:"
+          echo "  railway link <project-id>"
+          echo "  railway up"
 
   # Job 4: Smoke Tests (Post-deployment)
   smoke-tests:

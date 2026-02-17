@@ -12,6 +12,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Set git author for Vercel
+        run: |
+          git config user.email "euricojsalves@gmail.com"
+          git config user.name "DaSilvaAlves"
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:

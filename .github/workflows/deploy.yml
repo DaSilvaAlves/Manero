@@ -1,32 +1,21 @@
-name: Deploy to Vercel + Railway
+name: Deploy to Vercel
 
 on:
   push:
     branches:
       - master
       - main
-  pull_request:
-    branches:
-      - master
-      - main
 
 jobs:
-  # Job 1: Build & Test
-  build:
+  build-and-deploy:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [20.x]
-
     steps:
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
-      - name: Setup Node.js ${{ matrix.node-version }}
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: '20.x'
           cache: 'npm'
           cache-dependency-path: './apps/web/package-lock.json'
 
@@ -34,59 +23,16 @@ jobs:
         run: npm ci
         working-directory: ./apps/web
 
-      - name: Build project
+      - name: Build
         run: npm run build
         working-directory: ./apps/web
 
-      - name: Upload build artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: dist
-          path: apps/web/dist
-          retention-days: 1
-
-  # Job 2: Deploy to Vercel (Frontend)
-  deploy-vercel:
-    needs: build
-    runs-on: ubuntu-latest
-    if: github.event_name == 'push' && (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main')
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Download build artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: dist
-          path: apps/web/dist
-
       - name: Deploy to Vercel
-        uses: BrainCo/vercel-deploy@v1.37.0
-        with:
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
-          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
-
-      - name: Deployment Summary
         run: |
-          echo "✅ Frontend deployed to Vercel"
-          echo "Live: https://manuel-manero---ecossistema-uau.vercel.app"
-
-  # Job 3: Smoke Tests (Post-deployment)
-  smoke-tests:
-    needs: [deploy-vercel]
-    runs-on: ubuntu-latest
-    if: github.event_name == 'push' && (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main')
-
-    steps:
-      - name: Wait for deployment
-        run: sleep 30
-
-      - name: Test Vercel deployment
-        run: |
-          curl -I https://manuel-manero---ecossistema-uau.vercel.app
-        continue-on-error: true
-
-      - name: Success message
-        run: |
-          echo "✅ Site is LIVE!"
+          npm install -g vercel
+          cd apps/web
+          vercel deploy --prod --token=${{ secrets.VERCEL_TOKEN }}

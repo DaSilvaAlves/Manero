@@ -1,211 +1,251 @@
-# 🚀 HANDOFF DOCUMENT - Manuel Manero Ecossistema UAU
+# HANDOFF — Ecossistema Digital UAU: Manuel Manero
 
-**Data**: 2026-02-17
-**Status**: ✅ PRONTO PARA CONTINUAR
-**Context**: 7% restante - handoff para nova janela
-
----
-
-## 📊 RESUMO EXECUTIVO
-
-**O que foi feito**: Integração completa de Backend API Client + Lead Capture + Deploy para GitHub
-**Atual**: Pronto para Vercel + Railway
-**Próximo**: Deploy em produção (Vercel + Railway)
+**Data:** 2026-02-18
+**Status:** ONLINE — Site deployed e funcional
+**Repo:** https://github.com/DaSilvaAlves/Manero
+**Branch:** `master`
+**Último commit:** `7406f8e` — feat: add logo to navbar and social media preview
+**URL Produção:** https://manuel-manero.vercel.app
 
 ---
 
-## 🎯 ESTADO DO PROJETO
+## ESTADO ATUAL DO PROJETO
 
-### Repositório
-- **URL**: https://github.com/DaSilvaAlves/Manero
-- **Branch**: master
-- **Commit**: `2108dad` (feat: integrate backend API client and lead capture)
-- **Status**: ✅ Pushed e sincronizado
+### O que está feito e funcional
 
-### Estrutura
+| Feature | Status | Notas |
+|---------|--------|-------|
+| Site React + Vite | ONLINE | Deploy automático via GitHub Actions → Vercel |
+| Home page completa | OK | Hero, pilares, quiz AI, programas, testimonials, lead form |
+| Página Sobre | OK | Timeline, missão, valores |
+| Página Programas | OK | 3 programas + mentorias + lead form |
+| Página Comunidade | OK | Community.tsx |
+| AI Chat (Gemini) | OK | Chatbot flutuante com contexto de marca |
+| AI Quiz (Gemini) | OK | 3 perguntas + diagnóstico AI personalizado |
+| Lead Form | OK | Formulário de captura (precisa de backend para funcionar) |
+| Menu Mobile | OK | Hamburger animado com navegação completa |
+| CI/CD Pipeline | OK | Push to master → auto deploy Vercel (~40s) |
+| SEO básico | OK | Meta tags, OpenGraph, favicon |
+| Logo customizado | OK | Navbar + favicon + OG image |
+| Hero background | OK | Imagem customizada com efeito radial glow |
+
+---
+
+## CI/CD & DEPLOYMENT
+
+### Pipeline
 ```
-manuel-manero---ecossistema-uau/
-├── apps/web/                    # Vite + React frontend
+git push origin master → GitHub Actions → Vercel CLI (prebuilt) → Production (~40s)
+```
+
+### Workflow: `.github/workflows/deploy.yml`
+```yaml
+Steps: checkout → set git author → setup node → npm ci → vercel pull → vercel build → vercel deploy --prebuilt
+```
+
+### IMPORTANTE — Git Author
+O deploy Vercel **rejeita** commits cujo author email não seja membro da conta Vercel.
+- Git config local já definido: `user.email = euricojsalves@gmail.com`
+- Se mudar, o deploy falha com: `"Git author X must have access to the team"`
+
+### GitHub Secrets (4 configurados)
+
+| Secret | Uso |
+|--------|-----|
+| `VERCEL_TOKEN` | Token de deploy Vercel |
+| `VERCEL_ORG_ID` | ID da conta Vercel |
+| `VERCEL_PROJECT_ID` | ID do projeto no Vercel |
+| `RAILWAY_TOKEN` | Token Railway (backend — não ativo ainda) |
+
+### Vercel Environment Variables
+
+| Variable | Uso |
+|----------|-----|
+| `GEMINI_API_KEY` | Google Gemini API para AI Chat e Quiz |
+
+---
+
+## ESTRUTURA DO PROJETO
+
+```
+manuel-manero---ecossistema-uau/          # C:\Users\XPS\Documents\manuel-manero---ecossistema-uau
+├── .github/workflows/
+│   └── deploy.yml                        # CI/CD GitHub Actions → Vercel
+├── apps/web/
+│   ├── public/
+│   │   ├── hero-bg.png                   # Background hero customizado
+│   │   ├── hero-bg.jpeg                  # Background alternativo
+│   │   └── logo.png                      # Logo Manuel Manero
 │   ├── src/
 │   │   ├── components/
-│   │   │   ├── Layout.tsx       ✅ Navbar + Footer
-│   │   │   ├── AIChat.tsx       ✅ Gemini integration
-│   │   │   ├── AIQuiz.tsx       ✅ Assessment
-│   │   │   ├── LeadForm.tsx     ✅ NOVO - Lead capture
+│   │   │   ├── AIChat.tsx                # Chat AI flutuante (Gemini)
+│   │   │   ├── AIQuiz.tsx                # Quiz diagnóstico AI (Gemini)
+│   │   │   ├── Layout.tsx                # Navbar + Footer + Mobile Menu
+│   │   │   └── LeadForm.tsx              # Formulário captura de leads
 │   │   ├── pages/
-│   │   │   ├── Home.tsx         ✅ Página inicial
-│   │   │   ├── Community.tsx    ✅ MODIFICADO - LeadForm integrado
+│   │   │   ├── Home.tsx                  # Página principal completa
+│   │   │   └── Community.tsx             # Página comunidade
 │   │   ├── services/
-│   │   │   ├── api.ts           ✅ NOVO - API Client
-│   │   │   ├── gemini.ts        ✅ Gemini service
-│   │   ├── constants.tsx        ✅ PROGRAMS, TESTIMONIALS
-│   │   └── types.ts             ✅ TypeScript types
-│   └── .env.local               ✅ REACT_APP_API_URL=http://localhost:3001
-├── src/
-│   ├── services/api.ts          ✅ NOVO - API Client (duplicate in root)
-│   └── components/LeadForm.tsx  ✅ NOVO - Lead Form (duplicate in root)
-└── .git/                        ✅ Git initialized + remote configured
-
+│   │   │   ├── gemini.ts                 # Serviço Google Gemini AI
+│   │   │   └── api.ts                    # Cliente HTTP para backend API
+│   │   ├── App.tsx                       # Router + páginas Sobre/Programas inline
+│   │   ├── index.tsx                     # Entry point React
+│   │   ├── constants.tsx                 # Dados estáticos (programas, testimonials, quiz)
+│   │   └── types.ts                      # Interfaces TypeScript
+│   ├── index.html                        # HTML: Tailwind CDN, SEO, fonts, importmap
+│   ├── vite.config.ts                    # Vite config (aliases, Gemini env inject)
+│   ├── tsconfig.json                     # TypeScript config
+│   └── package.json                      # React 19, Vite 6, react-router-dom 7
+├── src/                                  # DUPLICATAS da raiz (limpeza pendente)
+│   ├── services/api.ts
+│   └── components/LeadForm.tsx
+├── constants.tsx                         # DUPLICATA (limpeza pendente)
+├── HANDOFF.md                            # ← ESTE FICHEIRO
+└── README.md
 ```
 
-### Funcionalidades Implementadas
-- ✅ **API Client Service**: HTTP wrapper com error handling
-- ✅ **Lead Capture Form**: LeadForm component com validação
-- ✅ **Community Page**: Integrada com LeadForm
-- ✅ **Environment Config**: REACT_APP_API_URL configured
-- ✅ **GitHub Integration**: Repositório sincronizado
-- ✅ **QA Approved**: ✅ PASS - ready for production
+### Stack Tecnológico
+
+| Camada | Tecnologia | Versão |
+|--------|-----------|--------|
+| Frontend | React + TypeScript | 19.2 |
+| Build | Vite | 6.2 |
+| Styling | TailwindCSS (CDN) | 3.x |
+| Routing | react-router-dom (HashRouter) | 7.13 |
+| AI | Google Gemini API | @google/genai 1.40 |
+| Deploy | Vercel (prebuilt via CLI) | — |
+| CI/CD | GitHub Actions | — |
 
 ---
 
-## 🔧 AGENTES AIOS ENVOLVIDOS
+## MELHORIAS PENDENTES (por prioridade)
 
-| Agente | Status | Responsabilidade |
-|--------|--------|-----------------|
-| **@architect (Aria)** | ✅ Completo | Desenhou arquitetura integrada |
-| **@data-engineer (Dara)** | ✅ Completo | Validou schema Prisma |
-| **@dev (Dex)** | ✅ Completo | Implementou integração |
-| **@github-devops (Gage)** | ✅ Completo | Fez push para GitHub |
-| **@qa (Quinn)** | ✅ Completo | Validou código e testes |
+### ALTA PRIORIDADE
 
----
+**1. Segurança: API Key Gemini exposta no client-side**
+- `vite.config.ts` injeta `GEMINI_API_KEY` via `process.env.API_KEY` no bundle JS
+- Qualquer utilizador pode ver a key nas DevTools do browser
+- **Solução:** Criar backend endpoint que proxy para Gemini, nunca expor key no frontend
+- **Ficheiros:** `vite.config.ts`, `services/gemini.ts`
 
-## 📋 PRÓXIMOS PASSOS (Para nova janela)
+**2. Backend API (não existe ainda)**
+- `api.ts` tem cliente HTTP pronto apontando para `localhost:3001`
+- `LeadForm` chama `apiClient.submitLead()` → vai falhar sem backend
+- **Solução:** Criar servidor Express/Fastify com:
+  - `POST /api/leads` — captura de leads
+  - `POST /api/ai/chat` — proxy seguro para Gemini
+  - `POST /api/ai/diagnosis` — proxy diagnóstico AI
+- Deploy no Railway (token já configurado no GitHub)
 
-### FASE 1: Deploy em Vercel (Frontend)
-```
-1. Ir em https://vercel.com
-2. Importar repositório: https://github.com/DaSilvaAlves/Manero
-3. Configurar:
-   - Build command: npm run build
-   - Output directory: dist/
-   - Environment: REACT_APP_API_URL=https://[seu-api].railway.app
-4. Deploy automático
-```
+**3. Tailwind CDN → Instalação local**
+- `index.html` usa `<script src="https://cdn.tailwindcss.com">`
+- Warning em produção + dependência de CDN externo
+- **Solução:** `npm install -D tailwindcss postcss autoprefixer` + config
 
-### FASE 2: Deploy em Railway (Backend)
-```
-1. Repositório separado: C:\Users\XPS\Documents\manuel-manero\apps\api
-2. Ou: Monorepo integrado em GitHub
-3. Configurar:
-   - Framework: Node.js
-   - Build: npm run build
-   - Start: npm start
-   - Port: 3001
-   - Database: Vercel Postgres ou Supabase
-4. Deploy automático
-```
+### MÉDIA PRIORIDADE
 
-### FASE 3: Integração Final
-```
-1. Verificar CORS no backend
-2. Testar POST /api/leads do frontend
-3. Validar resposta no LeadForm
-4. Configurar ActiveCampaign CRM (opcional)
-```
+**4. Limpeza de ficheiros duplicados**
+- `src/services/api.ts` e `src/components/LeadForm.tsx` na raiz — duplicatas
+- `constants.tsx` na raiz — duplicata de `apps/web/src/constants.tsx`
+- **Ação:** Eliminar duplicatas da raiz
 
----
+**5. Redes sociais com URLs reais**
+- Footer tem links genéricos (`instagram.com/manuelmanero`, etc.)
+- Manuel Manero precisa fornecer URLs corretos
 
-## 🔑 ARQUIVO CRIADO NESTA SESSÃO
+**6. Conteúdo real do cliente**
+- Testimonials são fictícios (Ana Silva, João Pereira)
+- Timeline/biografia precisa de validação com dados reais
+- Hero background pode ser substituído por foto profissional
 
-### Novos Arquivos
-- ✅ `src/services/api.ts` - API Client Service
-- ✅ `src/components/LeadForm.tsx` - Lead Capture Form
-- ✅ `apps/web/src/services/api.ts` - Duplicate (reorganizar depois)
-- ✅ `apps/web/src/components/LeadForm.tsx` - Duplicate (reorganizar depois)
+**7. Formulário Lead sem destino funcional**
+- Dados submetidos não vão a lado nenhum sem backend
+- **Alternativa rápida:** Integrar com Formspree, Google Forms, ou Mailchimp
 
-### Arquivos Modificados
-- ✅ `apps/web/src/pages/Community.tsx` - LeadForm integrado
-- ✅ `apps/web/.env.local` - Env vars configuradas
-- ✅ `.git/` - Git repository initialized
+**8. Páginas adicionais**
+- `/escola` — referenciada mas não existe
+- `/blog` — não implementado
+- `/contacto` — não implementado
 
-### Commit
-- Hash: `2108dad`
-- Message: "feat: integrate backend API client and lead capture"
-- Status: ✅ Pushed para master
+### BAIXA PRIORIDADE
+
+**9. Performance**
+- Bundle JS: 531KB (acima do limite 500KB do Vite)
+- Solução: `React.lazy()` para code-splitting das páginas
+
+**10. Acessibilidade**
+- Botões com emojis sem `aria-label`
+- Falta roles semânticos no chat
+
+**11. Ficheiros não commitados na raiz**
+- `img-capa.png` e `logo.png` — decidir se commitar ou remover
 
 ---
 
-## 🛠️ COMANDOS ÚTEIS PARA RETOMAR
+## NOTAS TÉCNICAS IMPORTANTES
+
+1. **HashRouter** — Usa `HashRouter` (URLs com `#/`). Para `BrowserRouter` seria preciso config de rewrites no Vercel.
+
+2. **Git Author** — Config local: `euricojsalves@gmail.com`. Mudar = deploy falha.
+
+3. **Import Maps** — `index.html` tem `<script type="importmap">` que resolve React/Gemini via esm.sh. O Vite trata no build, mas novas deps precisam de entrada no importmap.
+
+4. **Gemini Model** — Atualizado para `gemini-2.0-flash`. Verificar compatibilidade se API mudar.
+
+5. **Vercel Git Integration** — Conectado a `DaSilvaAlves/Manero`. Vercel pode tentar deploy automático por si (além do GitHub Actions). Se der conflito, desconectar no dashboard.
+
+---
+
+## PARA RETOMAR NA PRÓXIMA JANELA
+
+Copiar e colar isto na nova conversa:
+
+```
+Retomar projeto Manuel Manero — Ecossistema Digital UAU.
+
+Projeto: C:\Users\XPS\Documents\manuel-manero---ecossistema-uau
+Repo: https://github.com/DaSilvaAlves/Manero
+URL: https://manuel-manero.vercel.app
+
+Estado:
+- Site ONLINE e funcional (React + Vite + Vercel)
+- CI/CD automático (push → deploy em ~40s)
+- AI Chat e Quiz funcionais (Gemini)
+- Detalhes completos em HANDOFF.md
+
+Próximos passos por prioridade:
+1. Criar backend API (Express) para proteger API key Gemini e receber leads
+2. Migrar Tailwind de CDN para instalação local
+3. Limpar ficheiros duplicados na raiz do projeto
+4. Adicionar conteúdo real (testimonials, URLs redes sociais, fotos)
+5. Implementar páginas em falta (/blog, /contacto, /escola)
+
+Ler: HANDOFF.md para contexto completo.
+@dev para implementação | @devops para deploy
+```
+
+---
+
+## COMANDOS ÚTEIS
 
 ```bash
-# Voltar ao projeto
-cd "/c/Users/XPS/Documents/manuel-manero---ecossistema-uau"
+# Dev local
+cd "C:\Users\XPS\Documents\manuel-manero---ecossistema-uau\apps\web"
+npm run dev          # localhost:3000
 
-# Verificar status
-git status
-git log --oneline -5
+# Build
+npm run build        # Gera dist/
 
-# Dev server (irá rodar em 3002 ou próxima porta disponível)
-cd apps/web && npm run dev
+# Deploy (automático via push)
+cd "C:\Users\XPS\Documents\manuel-manero---ecossistema-uau"
+git add . && git commit -m "feat: ..." && git push origin master
 
-# Build para produção
-cd apps/web && npm run build
-
-# Ver .env
-cat apps/web/.env.local
+# Ver logs de deploy
+gh run list --limit 5
+gh run view <ID> --log
 ```
 
 ---
 
-## ⚠️ NOTAS IMPORTANTES
-
-### Estrutura (Precisa Reorganizar)
-- ❗ Há duplicatas de `api.ts` e `LeadForm.tsx` (raiz + apps/web/src/)
-- ℹ️ Solução: Deletar duplicatas da raiz, manter em apps/web/src/
-- ℹ️ Depois de próxima sessão: limpar duplicatas
-
-### Portas
-- ℹ️ Port 3000-3004 estão em uso no seu sistema
-- ℹ️ Vite automaticamente sobe em próxima porta disponível
-- ℹ️ Verificar: `netstat -an | grep LISTEN` antes de dev
-
-### Backend Separado
-- ⚠️ Backend Express ainda está em: `C:\Users\XPS\Documents\manuel-manero\apps\api`
-- ℹ️ Precisa ser deployado em Railway separadamente
-- ℹ️ Ou: Integrar tudo em um monorepo único no GitHub
-
----
-
-## 📞 PARA RETOMAR NA PRÓXIMA JANELA
-
-**Copie e cole isso na nova conversa**:
-
-```
-Preciso retomar o projeto Manuel Manero.
-Temos um handoff document em:
-C:\Users\XPS\Documents\manuel-manero---ecossistema-uau\HANDOFF.md
-
-Estado atual:
-- ✅ Frontend integrado (API Client + LeadForm + Community page)
-- ✅ GitHub push completo (commit 2108dad)
-- ✅ QA aprovado
-- ⏳ Próximo: Deploy em Vercel + Railway
-
-Favor ativar AIOS:
-1. @architect - revisar deploy strategy
-2. @dev - reorganizar duplicatas de arquivos
-3. @github-devops - setup GitHub Actions para deploy automático
-4. @qa - validar produção
-```
-
----
-
-## ✅ CHECKLIST PARA CONTINUAR
-
-- [ ] Ler este HANDOFF.md
-- [ ] Ativar @architect para deploy strategy
-- [ ] Ativar @dev para cleanup de arquivos
-- [ ] Ativar @github-devops para GitHub Actions
-- [ ] Ativar @qa para validação de produção
-- [ ] Deploy em Vercel
-- [ ] Deploy em Railway
-- [ ] Teste end-to-end
-
----
-
-**Documento criado**: 2026-02-17 05:45 UTC
-**Status**: ✅ PRONTO PARA HANDOFF
-**Próximo Agente**: @architect (deploy strategy)
-
-— AIOS Framework, continuando em nova janela 🚀
+*Criado: 2026-02-18 | Equipa: @dev (Dex) + @devops (Gage)*
+*Sessão: Fix GitHub Actions + Vercel deploy + Site improvements*
